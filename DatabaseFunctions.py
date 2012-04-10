@@ -56,11 +56,26 @@ def authorize_user(facebook_check, facebook_url, target_database, target_collect
     else:
         return 'You\'ve got something else to do before you can claim your download'
 
-            
+
+
+def validate_user(facebook_verification, facebook_url, download_key, target_database, target_collection):
+    """
+    Checks to ensure user has key and is approved user.
+    """
+    if facebook_verification:
+        collection = connect_to_db(target_database, target_collection)
+        if list(collection.find({'user': facebook_url})) == list(collection.find({'key': download_key})):
+            print list(collection.find({'user': facebook_url})), list(collection.find({'key': download_key}))
+            return True
+        else:
+            return False
+    else:
+        return False
 
 
 
 if __name__ == '__main__':
     create_download_database(10, 'downloadDB', 'downloads')
-    print authorize_user(True, 'guy', 'downloadDB', 'downloads')
+    x = authorize_user(True, 'guy', 'downloadDB', 'downloads')
+    print validate_user(True, 'guy', x, 'downloadDB', 'downloads')
 
